@@ -35,18 +35,17 @@
         color: #666;
     }
 
-    /* --- O SEGREDO DO MOSAICO ESTILO PINTEREST --- */
     .gallery {
-        column-count: 4; /* 4 colunas no computador */
-        column-gap: 15px; /* Espaço entre as colunas */
+        column-count: 4;
+        column-gap: 15px;
         max-width: 1200px;
         margin: 0 auto;
     }
 
     .gallery-item {
-        display: inline-block; /* Impede que a foto se divida entre duas colunas */
+        display: inline-block;
         width: 100%;
-        margin-bottom: 15px; /* Espaço embaixo de cada foto */
+        margin-bottom: 15px;
         border-radius: 12px;
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         cursor: pointer;
@@ -61,31 +60,29 @@
 
     .gallery-item img {
         width: 100%;
-        height: auto; /* ISSO IMPEDE O CORTE! A foto mantém a proporção original */
+        height: auto;
         display: block;
         border-radius: 12px;
     }
 
-    /* --- RESPONSIVIDADE (Ajusta o número de colunas na tela) --- */
     @media (max-width: 1024px) {
         .gallery {
-            column-count: 3; /* 3 colunas em telas médias/tablets deitados */
+            column-count: 3;
         }
     }
 
     @media (max-width: 768px) {
         .gallery {
-            column-count: 2; /* 2 colunas em tablets em pé */
+            column-count: 2;
         }
     }
 
     @media (max-width: 480px) {
         .gallery {
-            column-count: 1; /* 1 coluna cheia no celular (igual ao seu desenho) */
+            column-count: 2;
         }
     }
 
-    /* --- ESTILO DO MODAL (Clique para ampliar) --- */
     .modal {
         display: none;
         position: fixed;
@@ -141,39 +138,35 @@
         const modalImg = document.getElementById('modalImg');
         const closeBtn = document.getElementById('closeBtn');
 
-        const estilos = ['', 'horizontal', 'vertical', 'grande'];
-        const urlAPI = `https://api.github.com/repos/gab-castelo/nossa-galeria/contents/img`;
+        function embaralhar(lista) {
+            for (let i = lista.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [lista[i], lista[j]] = [lista[j], lista[i]];
+            }
+            return lista;
+        }
 
-        fetch(urlAPI)
+        fetch('imagens.json')
             .then(response => response.json())
             .then(arquivos => {
-                let contador = 0;
-                
-                arquivos.forEach(arquivo => {
-                    console.log('Arquivo encontrado:', arquivo.name);
-                    if (arquivo.name.match(/\.(jpe?g|png|gif|webp)$/i)) {
-                        
-                        const item = document.createElement('div');
-                        item.classList.add('gallery-item');
+                const arquivosEmbaralhados = embaralhar(arquivos);
 
-                        const estiloAleatorio = estilos[contador % estilos.length];
-                        if (estiloAleatorio) {
-                            item.classList.add(estiloAleatorio);
-                        }
-                        contador++;
+                arquivosEmbaralhados.forEach(caminhoImagem => {
+                    
+                    const item = document.createElement('div');
+                    item.classList.add('gallery-item');
 
-                        const img = document.createElement('img');
-                        img.src = arquivo.download_url;
-                        img.alt = "arquivo.name";
+                    const img = document.createElement('img');
+                    img.src = caminhoImagem;
+                    img.alt = "Foto de Gabriel e Geo";
 
-                        img.addEventListener('click', () => {
-                            modalImg.src = arquivo.download_url;
-                            modal.classList.add('active');
-                        });
+                    img.addEventListener('click', () => {
+                        modalImg.src = caminhoImagem;
+                        modal.classList.add('active');
+                    });
 
-                        item.appendChild(img);
-                        galeria.appendChild(item);
-                    }
+                    item.appendChild(img);
+                    galeria.appendChild(item);
                 });
             })
             .catch(erro => console.error('Erro ao carregar as fotos:', erro));
