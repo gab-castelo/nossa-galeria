@@ -5,48 +5,121 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nossa Galeria Dinâmica ❤️</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: sans-serif; background-color: #f7f9fc; padding: 20px; }
-        header { text-align: center; margin-bottom: 30px; }
-        header h1 { color: #e63946; }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f7f9fc;
+        color: #333;
+        padding: 20px;
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding: 20px 0;
+    }
+
+    header h1 {
+        font-size: 2.5rem;
+        color: #e63946;
+        margin-bottom: 5px;
+    }
+
+    header p {
+        font-size: 1.1rem;
+        color: #666;
+    }
+
+    /* --- O SEGREDO DO MOSAICO ESTILO PINTEREST --- */
+    .gallery {
+        column-count: 4; /* 4 colunas no computador */
+        column-gap: 15px; /* Espaço entre as colunas */
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .gallery-item {
+        display: inline-block; /* Impede que a foto se divida entre duas colunas */
+        width: 100%;
+        margin-bottom: 15px; /* Espaço embaixo de cada foto */
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background-color: #fff;
+    }
+
+    .gallery-item:hover {
+        transform: scale(1.03);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: auto; /* ISSO IMPEDE O CORTE! A foto mantém a proporção original */
+        display: block;
+        border-radius: 12px;
+    }
+
+    /* --- RESPONSIVIDADE (Ajusta o número de colunas na tela) --- */
+    @media (max-width: 1024px) {
         .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            grid-auto-rows: 200px;
-            grid-gap: 15px;
-            max-width: 1200px;
-            margin: 0 auto;
+            column-count: 3; /* 3 colunas em telas médias/tablets deitados */
         }
+    }
 
-        .gallery-item {
-            position: relative;
-            overflow: hidden;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            cursor: pointer;
-            transition: transform 0.3s;
+    @media (max-width: 768px) {
+        .gallery {
+            column-count: 2; /* 2 colunas em tablets em pé */
         }
+    }
 
-        .gallery-item:hover { transform: scale(1.02); }
-        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* Estilos aleatórios para o efeito mosaico (no PC) */
-        @media (min-width: 768px) {
-            .gallery { grid-template-columns: repeat(4, 1fr); }
-            .horizontal { grid-column: span 2; }
-            .vertical { grid-row: span 2; }
-            .grande { grid-column: span 2; grid-row: span 2; }
+    @media (max-width: 480px) {
+        .gallery {
+            column-count: 1; /* 1 coluna cheia no celular (igual ao seu desenho) */
         }
+    }
 
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.9); z-index: 1000; justify-content: center; align-items: center;
-        }
-        .modal.active { display: flex; }
-        .modal-content { max-width: 90%; max-height: 85%; border-radius: 8px; }
-        .close-btn { position: absolute; top: 20px; right: 30px; color: #fff; font-size: 40px; cursor: pointer; }
-    </style>
+    /* --- ESTILO DO MODAL (Clique para ampliar) --- */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal.active {
+        display: flex;
+    }
+
+    .modal-content {
+        max-width: 95%;
+        max-height: 90%;
+        border-radius: 8px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        color: #fff;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>
 </head>
 <body>
 
