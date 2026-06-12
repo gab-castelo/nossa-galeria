@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nossa Galeria Dinâmica ❤️</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: sans-serif; background-color: #f7f9fc; padding: 20px; }
+        header { text-align: center; margin-bottom: 30px; }
+        header h1 { color: #e63946; }
+
+        /* Grid da Galeria */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-auto-rows: 200px;
+            grid-gap: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover { transform: scale(1.02); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Estilos aleatórios para o efeito mosaico (no PC) */
+        @media (min-width: 768px) {
+            .gallery { grid-template-columns: repeat(4, 1fr); }
+            .horizontal { grid-column: span 2; }
+            .vertical { grid-row: span 2; }
+            .grande { grid-column: span 2; grid-row: span 2; }
+        }
+
+        /* Modal */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9); z-index: 1000; justify-content: center; align-items: center;
+        }
+        .modal.active { display: flex; }
+        .modal-content { max-width: 90%; max-height: 85%; border-radius: 8px; }
+        .close-btn { position: absolute; top: 20px; right: 30px; color: #fff; font-size: 40px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Nossos Momentos</h1>
+        <p>Carregados automaticamente com amor ❤️</p>
+    </header>
+
+    <main class="gallery" id="galeria"></main>
+
+    <div class="modal" id="photoModal">
+        <span class="close-btn" id="closeBtn">&times;</span>
+        <img class="modal-content" id="modalImg" src="">
+    </div>
+
+    <script>
+        // ================= CONFIGURAÇÃO DO SEU GITHUB =================
+        const usuario = 'gab-castelo'; 
+        const repositorio = 'nossa-galeria';
+        const pastaImagens = 'img';
+        // ==============================================================
+
+        const galeria = document.getElementById('galeria');
+        const modal = document.getElementById('photoModal');
+        const modalImg = document.getElementById('modalImg');
+        const closeBtn = document.getElementById('closeBtn');
+
+        const estilos = ['', 'horizontal', 'vertical', 'grande'];
+
+        const urlAPI = `https://api.github.com/repos/${usuario}/${repositorio}/contents/${pastaImagens}`;
+
+        fetch(urlAPI)
+            .then(response => response.json())
+            .then(arquivos => {
+                let contador = 0;
+
+                arquivos.forEach(arquivo => {
+                    if (arquivo.name.match(/\.(jpe?g|png|gif|webp)$/i)) {
+                        
+                        const item = document.createElement('div');
+                        item.classList.add('gallery-item');
+
+                        const estiloAleatorio = estilos[contador % estilos.length];
+                        if (estiloAleatorio) {
+                            item.classList.add(estiloAleatorio);
+                        }
+                        contador++;
+
+                        const img = document.createElement('img');
+                        img.src = arquivo.download_url;
+                        img.alt = "Foto do casal";
+
+                        img.addEventListener('click', () => {
+                            modalImg.src = arquivo.download_url;
+                            modal.classList.add('active');
+                        });
+
+                        item.appendChild(img);
+                        galeria.appendChild(item);
+                    }
+                });
+            })
+            .catch(erro => console.error('Erro ao carregar as fotos:', erro));
+
+        // Fechar Modal
+        closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
+    </script>
+</body>
+</html>
